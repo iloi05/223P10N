@@ -1,4 +1,10 @@
+# Name: Ivy Loi
+# Project 10
+# Purpose of file: Program reads and writes csv file
+
 import csv
+
+import os
 
 counters = {"fresh": 0, "soph": 0, "jr": 0, "sen": 0}
 
@@ -9,7 +15,7 @@ try:
 
         s = csv.DictReader(file1)
         for row in s:
-            level = row["Level"].strip()
+            level = row["Level"].strip().upper()
             sid = row["ID"]
 
             if level == "FRESH":
@@ -21,7 +27,7 @@ try:
             elif level == "SR":
                 counters["sen"] += 1
 
-        students[sid] = {"Total_Units": 0, "CPSC_Units": 0}
+            students[sid] = {"Total_Units": 0, "CPSC_Units": 0}
 
         print(f'{counters["fresh"]} freshmen')
         print(f'{counters["soph"]} sophomores')
@@ -31,7 +37,7 @@ try:
         e = csv.DictReader(file2)
         for row in e:
             eid = row["ID"]
-            course = row["Course"]
+            course = row["Course"].strip()
             units = int(row["Units"])
 
             if eid in students:
@@ -51,15 +57,17 @@ except Exception as e:
 
 try:
     with open('outputfile.csv', mode='w', newline='') as file3:
-        try:
+      
             writer = csv.writer(file3)
             writer.writerow(["ID", "Total Units", "CPSC Units"])
             for sid, data in students.items():
                 writer.writerow([sid, data["Total_Units"], data["CPSC_Units"]])
-
-        except Exception as write_error:
-            print("Error writing to outputfile.csv", write_error)
 except FileNotFoundError:
     print("Directory for 'outputfile.csv' does not exist.")
 except Exception as e:
     print("Error writing to outputfile.csv:", e)
+
+if os.path.exists('outputfile.csv') and os.path.getsize('outputfile.csv') > 0:
+    print("Output file exists and has been written successfully.")
+else:
+    print("Output file was not created or is empty.")
